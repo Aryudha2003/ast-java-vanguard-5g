@@ -1,0 +1,26 @@
+{
+  "token": "6386b0e8a11341be80b27886f9f5b05c",
+  "source_name": "20261006_110849_Progress_and_Plan_Vanguard_2026_2_Oct.xlsx",
+  "before": {
+    "total_sites": 1741,
+    "on_air": 1087,
+    "integrated": 20,
+    "on_progress": 634
+  },
+  "after": {
+    "total_sites": 1741,
+    "on_air": 1303,
+    "integrated": 8,
+    "on_progress": 430
+  },
+  "delta": {
+    "total_sites": 0,
+    "on_air": 216,
+    "integrated": -12,
+    "on_progress": -204
+  },
+  "validation": {
+    "duplicate_site_id_count": 17,
+    "invalid_coordinate_count": 0
+  }
+}

@@ -1,0 +1,178 @@
+{% macro nav(user, page) %}
+<aside class="sidebar">
+  <!-- BRAND HEADER -->
+  <div class="sidebar-brand">
+    <div class="brand-logo-combo">
+      <div class="brand-logo-container">
+        <img src="{{ url_for('static', filename='indosat-logo-white.png') }}" alt="Indosat Ooredoo Hutchison" class="brand-logo-img">
+      </div>
+    </div>
+    <div class="brand-app-badge">
+      <span class="app-tag">EAST JAVA VANGUARD</span>
+      <span class="network-tag">5G INTELLIGENCE</span>
+    </div>
+  </div>
+
+  <!-- NAVIGATION MENU -->
+  <div class="sidebar-scroll">
+    <nav class="sidebar-nav">
+      <!-- SECTION: OPERASIONAL -->
+      <div class="nav-section-title">OPERASIONAL 5G</div>
+
+      <!-- DASHBOARD -->
+      <a class="nav-item {{ 'active' if page == 'dashboard' else '' }}"
+         href="{{ url_for('admin_home') if user.role == 'admin' else url_for('viewer_home') }}"
+         title="Dashboard Utama">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="9" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+          <rect x="14" y="12" width="7" height="9" rx="1.5"/>
+          <rect x="3" y="16" width="7" height="5" rx="1.5"/>
+        </svg>
+        <span class="nav-label">Dashboard</span>
+        {% if page == 'dashboard' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      {% if user.role == 'admin' %}
+      <!-- 5G SITES -->
+      <a class="nav-item {{ 'active' if page == 'sites' else '' }}"
+         href="{{ url_for('sites_page') }}"
+         title="5G Sites Explorer">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M8 6l8 4M8 14l8 4M4 8l16 8"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span class="nav-label">5G Sites</span>
+        <span class="nav-counter">1,741</span>
+        {% if page == 'sites' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      <!-- SECTION: ANALITIK & PERENCANAAN -->
+      <div class="nav-section-title">ANALITIK &amp; PERENCANAAN</div>
+
+      <!-- ANALYTICS -->
+      <a class="nav-item {{ 'active' if page == 'analytics' else '' }}"
+         href="{{ url_for('analytics_page') }}"
+         title="Analytics &amp; KPI">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 20V10M12 20V4M6 20v-6"/>
+        </svg>
+        <span class="nav-label">Analytics</span>
+        {% if page == 'analytics' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      <!-- REGIONAL REPORT -->
+      <a class="nav-item {{ 'active' if page == 'regional' else '' }}"
+         href="{{ url_for('regional_page') }}"
+         title="Regional Report Jawa Timur">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+          <line x1="8" y1="2" x2="8" y2="18"/>
+          <line x1="16" y1="6" x2="16" y2="22"/>
+        </svg>
+        <span class="nav-label">Regional Report</span>
+        {% if page == 'regional' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      <!-- NETWORK PERFORMANCE -->
+      <a class="nav-item {{ 'active' if page == 'network' else '' }}"
+         href="{{ url_for('network_page') }}"
+         title="Network Performance &amp; Health">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span class="nav-label">Network Health</span>
+        {% if page == 'network' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      <!-- PLANNING & ROLLOUT -->
+      <a class="nav-item {{ 'active' if page == 'planning' else '' }}"
+         href="{{ url_for('planning_page') }}"
+         title="Planning &amp; Rollout Backlog">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span class="nav-label">Planning &amp; Rollout</span>
+        {% if page == 'planning' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      <!-- SECTION: ADMINISTRASI SISTEM -->
+      <div class="nav-section-title">ADMINISTRASI SISTEM</div>
+
+      <!-- USER MANAGEMENT -->
+      <a class="nav-item nav-admin-item {{ 'active' if page == 'users' else '' }}"
+         href="{{ url_for('user_management') }}"
+         title="User Management &amp; Whitelist">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span class="nav-label">User Management</span>
+        <span class="badge-role-admin">ADMIN</span>
+        {% if page == 'users' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      <!-- DATA UPDATE CENTER -->
+      <a class="nav-item nav-admin-item {{ 'active' if page == 'data_update' else '' }}"
+         href="{{ url_for('data_update_center') }}"
+         title="Data Update Center (XLSX Pipeline)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span class="nav-label">Data Update</span>
+        <span class="badge-role-admin">PIPELINE</span>
+        {% if page == 'data_update' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      <!-- AUDIT LOG -->
+      <a class="nav-item nav-admin-item {{ 'active' if page == 'audit' else '' }}"
+         href="{{ url_for('audit_log_page') }}"
+         title="Audit Log &amp; Security Events">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        <span class="nav-label">Audit Log</span>
+        {% if page == 'audit' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+
+      <!-- SETTINGS -->
+      <a class="nav-item {{ 'active' if page == 'settings' else '' }}"
+         href="{{ url_for('settings_page') }}"
+         title="Settings">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span class="nav-label">Settings</span>
+        {% if page == 'settings' %}<span class="active-indicator"></span>{% endif %}
+      </a>
+      {% endif %}
+    </nav>
+  </div>
+
+  <!-- SIDEBAR FOOTER -->
+  <div class="sidebar-footer">
+    <div class="sidebar-user-card">
+      <div class="user-avatar-small">{{ user.name[:1] if user.name else 'U' }}</div>
+      <div class="user-info-text">
+        <span class="user-name-label">{{ user.name or user.email.split('@')[0] }}</span>
+        <span class="user-role-pill {{ 'role-admin' if user.role == 'admin' else 'role-viewer' }}">
+          {{ 'ADMIN' if user.role == 'admin' else 'VIEWER' }}
+        </span>
+      </div>
+    </div>
+    <div class="sidebar-system-status">
+      <span class="status-pulse-dot"></span>
+      <span class="system-status-text">5G Vanguard Live • East Java</span>
+    </div>
+  </div>
+</aside>
+{% endmacro %}

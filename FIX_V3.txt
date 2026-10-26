@@ -1,0 +1,6 @@
+V3 FIX
+- admin_home and viewer_home are defined BEFORE app.run()
+- require_role is defined
+- only 2 roles exist: admin and viewer
+- admin routes are backend protected
+- viewer cannot open /admin, /admin/user-management, /admin/audit-log, /api/export

@@ -1,0 +1,9 @@
+FIXED VERSION
+Problem: dashboard template called url_for('admin_home') but the running app.py was an older/mixed version without that endpoint.
+Fix:
+- ensured /admin endpoint -> admin_home exists
+- ensured /viewer endpoint -> viewer_home exists
+- ensured dashboard template gets page='dashboard'
+- made nav endpoint selection Jinja-safe
+
+Use this folder instead of the previous v2 folder.

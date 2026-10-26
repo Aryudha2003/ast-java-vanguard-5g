@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Access Denied — East Java Vanguard 5G</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body class="vanguard-login-page">
+  <div class="login-bg-grid"></div>
+  <div class="login-orb login-orb-one"></div>
+  <div class="login-orb login-orb-two"></div>
+
+  <main class="vanguard-login-card denied-card">
+    <div class="denied-icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+
+    <div class="login-security-label" style="color:#ef4444;">
+      <span></span>
+      SECURITY ZERO-TRUST POLICY
+      <span></span>
+    </div>
+
+    <h1 class="login-main-title" style="margin-top:12px;color:#dc2626;">403 Access Denied</h1>
+
+    <div class="denied-account-box">
+      <span class="denied-account-label">Akun yang dicoba:</span>
+      <b class="denied-account-email">{{ email or "Akun Tidak Dikenal" }}</b>
+    </div>
+
+    <p class="login-description" style="margin-top:16px;">
+      Akun ini tidak terdaftar pada whitelist Administrator sistem <b>East Java Vanguard 5G</b>.
+      Silakan hubungi tim Administrator Jaringan atau login menggunakan akun Viewer.
+    </p>
+
+    <div class="denied-actions">
+      <a class="btn-action-primary" href="{{ url_for('login') }}" style="display:inline-flex;justify-content:center;padding:14px 28px;font-size:14px;">
+        &larr; Kembali ke Halaman Login
+      </a>
+    </div>
+
+    <footer class="login-security-footer" style="margin-top:32px;">
+      <span class="footer-line"></span>
+      <div>Percobaan akses tidak sah dicatat pada Audit Trail</div>
+      <span class="footer-line"></span>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        East Java Vanguard — 5G Deployment Dashboard
+    </title>
+
+
+    <!-- =====================================================
+         LEAFLET
+         Dipertahankan sementara agar dashboard lama tetap aman
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+    >
+
+
+    <!-- =====================================================
+         MAPTILER SDK
+         Akan digunakan untuk 3D Buildings
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css"
+    >
+
+    <script
+        src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js">
+    </script>
+
+
+    <!-- =====================================================
+         PROJECT CSS
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='styles.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    {% from '_nav.html' import nav %}
+
+    {{ nav(user, page) }}
+
+
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
+    <header class="topbar">
+
+        <div class="topbar-title">
+
+            <h1>
+                East Java Vanguard
+            </h1>
+
+            <span>
+                5G Deployment Dashboard • Raw Dataset 2026
+            </span>
+
+        </div>
+
+
+        <div class="topright">
+
+            <div class="conf">
+
+                <b>
+                    CONFIDENTIAL
+                </b>
+
+                <span>
+                    For authorized personnel only
+                </span>
+
+            </div>
+
+
+            <div
+                id="clock"
+                class="dashboard-clock"
+            ></div>
+
+
+            <div class="profile">
+
+                <div class="avatar">
+                    {{ user.name[:1] }}
+                </div>
+
+
+                <div class="profile-info">
+
+                    <b>
+                        {{ user.email }}
+                    </b>
+
+                    <span>
+                        {{ 'Administrator' if user.role == 'admin' else 'Viewer' }}
+                    </span>
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('logout') }}"
+                    title="Logout"
+                >
+                    ↪
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="content">
+
+
+        <!-- =================================================
+             KPI CARDS
+             ================================================= -->
+
+        <section class="kpi-grid">
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon kpi-pink">
+                    ◎
+                </div>
+
+                <div>
+
+                    <span>
+                        Total Site 5G
+                    </span>
+
+                    <h2 id="totalSites">
+                        —
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon kpi-green">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        On Air
+                    </span>
+
+                    <h2 id="onAirSites">
+                        —
+                    </h2>
+
+                    <small id="onAirPercent">
+                        —
+                    </small>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon kpi-blue">
+                    ◆
+                </div>
+
+                <div>
+
+                    <span>
+                        Integrated - NY OA
+                    </span>
+
+                    <h2 id="integratedSites">
+                        —
+                    </h2>
+
+                    <small id="integratedPercent">
+                        —
+                    </small>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon kpi-yellow">
+                    ◔
+                </div>
+
+                <div>
+
+                    <span>
+                        On Progress
+                    </span>
+
+                    <h2 id="progressSites">
+                        —
+                    </h2>
+
+                    <small id="progressPercent">
+                        —
+                    </small>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             DASHBOARD GRID
+             ================================================= -->
+
+        <section class="dashboard-grid">
+
+
+            <!-- =============================================
+                 LEFT COLUMN
+                 ============================================= -->
+
+            <div class="dashboard-main-column">
+
+
+                <!-- =========================================
+                     MAP CARD
+                     ========================================= -->
+
+                <section class="card map-card">
+
+
+                    <div class="card-head">
+
+
+                        <div>
+
+                            <h2>
+                                5G Site Distribution — East Java
+                            </h2>
+
+                            <p>
+                                1,741 site dari raw database Vanguard
+                            </p>
+
+                        </div>
+
+
+                        <!-- FILTER BAR -->
+
+                        <div class="map-toolbar">
+
+
+                            <select id="cityFilter">
+
+                                <option value="all">
+                                    Semua Kabupaten/Kota
+                                </option>
+
+                            </select>
+
+
+
+                            <select id="statusFilter">
+
+                                <option value="all">
+                                    Semua Status
+                                </option>
+
+                                <option value="On Air">
+                                    On Air
+                                </option>
+
+                                <option value="Integrated - NY OA">
+                                    Integrated - NY OA
+                                </option>
+
+                                <option value="Installation">
+                                    Installation
+                                </option>
+
+                                <option value="NY Install">
+                                    NY Install
+                                </option>
+
+                            </select>
+
+
+
+                            <select id="vendorFilter">
+
+                                <option value="all">
+                                    Semua Vendor
+                                </option>
+
+                                <option value="Nokia">
+                                    Nokia
+                                </option>
+
+                                <option value="Huawei">
+                                    Huawei
+                                </option>
+
+                            </select>
+
+
+
+                            <select id="programFilter">
+
+                                <option value="all">
+                                    Semua Program
+                                </option>
+
+                                <option value="5G Coverage">
+                                    5G Coverage
+                                </option>
+
+                                <option value="5G Refarm">
+                                    5G Refarm
+                                </option>
+
+                            </select>
+
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!--
+                        Container ini akan digunakan oleh:
+
+                        Leaflet sekarang
+                        ↓
+                        MapTiler 3D berikutnya
+                    -->
+
+                    <div
+                        id="map"
+                        class="dashboard-map"
+                    ></div>
+
+
+                </section>
+
+
+
+                <!-- =========================================
+                     DETAIL SITE
+                     ========================================= -->
+
+                <section class="card detail-site-card">
+
+
+                    <div class="card-head">
+
+
+                        <div>
+
+                            <h2>
+                                Detail Site
+                            </h2>
+
+                            <p>
+                                Data site aktual dari sheet raw
+                            </p>
+
+                        </div>
+
+
+
+                        <div class="site-actions">
+
+
+                            <input
+                                id="siteSearch"
+                                type="search"
+                                placeholder="Cari Site ID / Site Name / Kecamatan"
+                                autocomplete="off"
+                            >
+
+
+                            {% if user.role == 'admin' %}
+
+                            <a
+                                class="action-btn"
+                                href="{{ url_for('export_dataset', dataset='sites') }}"
+                            >
+                                ⇩ Export
+                            </a>
+
+                            {% endif %}
+
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="table-wrap">
+
+                        <table>
+
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Site ID
+                                    </th>
+
+                                    <th>
+                                        Site Name
+                                    </th>
+
+                                    <th>
+                                        City
+                                    </th>
+
+                                    <th>
+                                        Kecamatan
+                                    </th>
+
+                                    <th>
+                                        Program
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Vendor
+                                    </th>
+
+                                    <th>
+                                        Integration
+                                    </th>
+
+                                    <th>
+                                        On Air
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody id="siteTableBody">
+
+                                <!-- populated by JS -->
+
+                            </tbody>
+
+
+                        </table>
+
+                    </div>
+
+
+
+                    <div class="table-pagination">
+
+                        <span id="sitePageInfo"></span>
+
+
+                        <div>
+
+                            <button
+                                id="sitePrev"
+                                type="button"
+                            >
+                                ←
+                            </button>
+
+
+                            <button
+                                id="siteNext"
+                                type="button"
+                            >
+                                →
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                </section>
+
+
+            </div>
+
+
+
+            <!-- =============================================
+                 RIGHT COLUMN
+                 ============================================= -->
+
+            <aside class="dashboard-side-column">
+
+
+                <!-- =========================================
+                     CITY PROGRESS
+                     ========================================= -->
+
+                <section class="card">
+
+
+                    <div class="card-head">
+
+                        <div>
+
+                            <h2>
+                                On Air Rate per Wilayah
+                            </h2>
+
+                            <p>
+                                On Air ÷ total site
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="cityProgress"
+                        class="city-progress"
+                    ></div>
+
+
+                </section>
+
+
+
+                <!-- =========================================
+                     STATUS COMPOSITION
+                     ========================================= -->
+
+                <section class="card">
+
+
+                    <div class="card-head">
+
+                        <div>
+
+                            <h2>
+                                Status Composition
+                            </h2>
+
+                            <p>
+                                Distribusi status rollout
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="status-layout">
+
+
+                        <div
+                            id="statusDonut"
+                            class="status-donut"
+                        >
+
+                            <div>
+
+                                <strong id="donutTotal">
+                                    —
+                                </strong>
+
+                                <small>
+                                    Sites
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="statusLegend"
+                            class="status-legend"
+                        ></div>
+
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- =========================================
+                     VENDOR
+                     ========================================= -->
+
+                <section class="card">
+
+
+                    <div class="card-head">
+
+                        <div>
+
+                            <h2>
+                                Vendor Distribution
+                            </h2>
+
+                            <p>
+                                RAN vendor pada dataset
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="vendorBars"
+                        class="metric-bars"
+                    ></div>
+
+
+                </section>
+
+
+
+                <!-- =========================================
+                     PROGRAM
+                     ========================================= -->
+
+                <section class="card">
+
+
+                    <div class="card-head">
+
+                        <div>
+
+                            <h2>
+                                Program Mix
+                            </h2>
+
+                            <p>
+                                5G Coverage vs 5G Refarm
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="programBars"
+                        class="metric-bars"
+                    ></div>
+
+
+                </section>
+
+
+            </aside>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         SECURITY FOOTER
+         ===================================================== -->
+
+    <footer class="confidential-footer">
+
+        <strong>
+            🔒 CONFIDENTIAL SYSTEM
+        </strong>
+
+        <span>
+            Dashboard menggunakan data raw Vanguard 2026.
+            Batasi akses sesuai otorisasi perusahaan.
+        </span>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         WATERMARK
+         ===================================================== -->
+
+    <div class="watermark">
+
+        CONFIDENTIAL • {{ user.email }}
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MAPTILER CONFIGURATION
+
+         Jangan isi API key asli di sini.
+         Key dikirim dari Flask melalui .env.
+         ===================================================== -->
+
+    <script>
+
+        window.MAPTILER_API_KEY =
+            "{{ maptiler_api_key | default('') }}";
+
+    </script>
+
+
+
+    <!-- =====================================================
+         LEAFLET SCRIPT
+         Sementara masih dibutuhkan dashboard.js lama.
+         ===================================================== -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+
+    <script
+        src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js">
+    </script>
+
+
+
+    <!-- =====================================================
+         DASHBOARD JAVASCRIPT
+         ===================================================== -->
+
+    <script
+        src="{{ url_for('static', filename='dashboard.js') }}">
+    </script>
+
+
+</body>
+
+</html>

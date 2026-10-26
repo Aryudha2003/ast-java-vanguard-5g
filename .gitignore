@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.bak
+*.before_*
+
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Sensitive Environment Variables
+.env
+
+# Backups and temporary uploads
+data/backups/
+data/staging_pending/
+data/audit.log
+
+# OS files
+.DS_Store
+Thumbs.db

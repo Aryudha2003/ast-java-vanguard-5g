@@ -1,0 +1,293 @@
+
+let DATA=null;
+const page=document.body.dataset.page;
+const role=document.body.dataset.role;
+const byId=id=>document.getElementById(id);
+const fmt=n=>(n??0).toLocaleString("id-ID");
+const pct=(v,t)=>t?(v/t*100):0;
+
+async function getData(){
+  const r=await fetch("/api/dashboard",{cache:"no-store"});
+  if(!r.ok) throw new Error("Tidak dapat mengambil data dashboard");
+  DATA=await r.json();
+  if(page==="sites") initSites();
+  if(page==="analytics") initAnalytics();
+  if(page==="regional") initRegional();
+  if(page==="network") initNetwork();
+  if(page==="planning") initPlanning();
+}
+
+function barRows(obj, opts={}){
+  const entries=Array.isArray(obj)?obj:Object.entries(obj).map(([label,value])=>({label,value}));
+  const max=Math.max(1,...entries.map(x=>+x.value||0));
+  return entries.map(x=>{
+    const p=(+x.value||0)/max*100;
+    const sub=x.sub||"";
+    return `<div class="metric-row"><span class="metric-label">${x.label}</span><div class="metric-track"><i style="width:${p}%"></i></div><b>${x.display??fmt(x.value)}</b>${sub?`<small>${sub}</small>`:""}</div>`;
+  }).join("");
+}
+
+let map,siteLayer,sitePage=1;
+const PAGE=40;
+function initSites(){
+  const cities=[...new Set(DATA.sites.map(s=>s.city))].sort();
+  cities.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;byId("fCity").appendChild(o)});
+  map=L.map("sitesMap").setView([-7.45,112.55],8);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{attribution:"&copy; OpenStreetMap contributors &copy; CARTO"}).addTo(map);
+  siteLayer=L.markerClusterGroup({showCoverageOnHover:false,spiderfyOnMaxZoom:true,zoomToBoundsOnClick:true,disableClusteringAtZoom:15,maxClusterRadius:45}).addTo(map);
+  ["fCity","fStatus","fVendor","siteSearch"].forEach(id=>byId(id).addEventListener(id==="siteSearch"?"input":"change",()=>{sitePage=1;renderSites()}));
+  byId("sitePrev").addEventListener("click",()=>{sitePage=Math.max(1,sitePage-1);renderSites()});
+  byId("siteNext").addEventListener("click",()=>{sitePage++;renderSites()});
+  renderSites();
+}
+function siteFiltered(){
+  const c=byId("fCity").value,s=byId("fStatus").value,v=byId("fVendor").value,q=byId("siteSearch").value.toLowerCase();
+  return DATA.sites.filter(x=>(c==="all"||x.city===c)&&(s==="all"||x.status===s)&&(v==="all"||x.vendor===v)&&(!q||(x.site_id||"").toLowerCase().includes(q)||(x.site_name||"").toLowerCase().includes(q)));
+}
+function renderSites(){
+  const a=siteFiltered(),counts={};a.forEach(x=>counts[x.status]=(counts[x.status]||0)+1);
+  byId("sitesTotal").textContent=fmt(a.length);byId("sitesOnAir").textContent=fmt(counts["On Air"]||0);byId("sitesInt").textContent=fmt(counts["Integrated - NY OA"]||0);byId("sitesProgress").textContent=fmt((counts["Installation"]||0)+(counts["NY Install"]||0));
+  const colors={"On Air":"#20ad67","Integrated - NY OA":"#348ce4","Installation":"#f2b51d","NY Install":"#97a4b3"};
+  siteLayer.clearLayers();
+  a.forEach(x=>{if(typeof x.lat==="number"&&typeof x.lng==="number")L.circleMarker([x.lat,x.lng],{radius:3,weight:0,fillOpacity:.85,fillColor:colors[x.status]||"#888"}).bindTooltip(`<b>${x.site_id}</b><br>${x.site_name}<br>${x.city}<br>${x.status}`).addTo(siteLayer)});
+  const pages=Math.max(1,Math.ceil(a.length/PAGE));sitePage=Math.min(sitePage,pages);const slice=a.slice((sitePage-1)*PAGE,sitePage*PAGE);
+  byId("sitesBody").innerHTML=slice.map(x=>`<tr><td><b>${x.site_id}</b></td><td>${x.site_name}</td><td>${x.city}</td><td>${x.kecamatan}</td><td>${x.status}</td><td>${x.vendor}</td><td>${x.program}</td><td>${x.integration_date||"—"}</td><td>${x.on_air_date||"—"}</td></tr>`).join("");
+  byId("sitePage").textContent=`Page ${sitePage}/${pages} • ${fmt(a.length)} site`;
+  byId("sitePrev").disabled=sitePage<=1;byId("siteNext").disabled=sitePage>=pages;
+}
+
+function initAnalytics(){
+  const s=DATA.summary,total=s.total_sites,onair=s.status_counts["On Air"]||0;
+  byId("aTotal").textContent=fmt(total);byId("aRate").textContent=pct(onair,total).toFixed(1)+"%";byId("aNokia").textContent=fmt(s.vendor_counts.Nokia);byId("aHuawei").textContent=fmt(s.vendor_counts.Huawei);
+  byId("statusBars").innerHTML=barRows(s.status_counts);
+  byId("vendorAnalytics").innerHTML=barRows(s.vendor_counts);
+  byId("programAnalytics").innerHTML=barRows(s.program_counts);
+  const top=[...DATA.cities].sort((a,b)=>b.on_air_rate-a.on_air_rate).slice(0,10).map(x=>({label:x.city,value:x.on_air_rate,display:x.on_air_rate.toFixed(1)+"%"}));
+  byId("topCityBars").innerHTML=barRows(top);
+}
+
+function initRegional(){
+  byId("regionalSearch").addEventListener("input",renderRegional);renderRegional();
+}
+function renderRegional(){
+  const q=byId("regionalSearch").value.toLowerCase();
+  const rows=DATA.cities.filter(x=>x.city.toLowerCase().includes(q)).sort((a,b)=>b.total-a.total);
+  byId("regionalBody").innerHTML=rows.map(x=>`<tr><td><b>${x.city}</b></td><td>${fmt(x.total)}</td><td>${fmt(x.kecamatan)}</td><td>${fmt(x.on_air)}</td><td>${fmt(x.integrated_ny_oa)}</td><td>${fmt(x.installation)}</td><td>${fmt(x.ny_install)}</td><td>${x.on_air_rate.toFixed(1)}%</td><td>${fmt(x.nokia)}</td><td>${fmt(x.huawei)}</td></tr>`).join("");
+  const ranked=[...rows].sort((a,b)=>b.on_air_rate-a.on_air_rate).map(x=>({label:x.city,value:x.on_air_rate,display:x.on_air_rate.toFixed(1)+"%"}));
+  byId("regionalBars").innerHTML=barRows(ranked);
+}
+
+function initNetwork(){
+  const s=DATA.summary.status_counts,total=DATA.summary.total_sites,onair=s["On Air"]||0;
+  byId("nCompletion").textContent=pct(onair,total).toFixed(1)+"%";
+  byId("nIntegrated").textContent=fmt(s["Integrated - NY OA"]||0);
+  byId("nInstallation").textContent=fmt(s["Installation"]||0);
+  byId("nNotYet").textContent=fmt(s["NY Install"]||0);
+  byId("networkRegionBars").innerHTML=barRows([...DATA.cities].sort((a,b)=>b.on_air_rate-a.on_air_rate).map(x=>({label:x.city,value:x.on_air_rate,display:x.on_air_rate.toFixed(1)+"%"})));
+  const backlog={Nokia:0,Huawei:0};DATA.sites.filter(x=>x.status!=="On Air").forEach(x=>backlog[x.vendor]=(backlog[x.vendor]||0)+1);
+  byId("networkBacklog").innerHTML=barRows(backlog);
+}
+
+function initPlanning(){
+  const s=DATA.summary.status_counts;
+  byId("pBacklog").textContent=fmt(DATA.summary.total_sites-(s["On Air"]||0));
+  byId("pIntegrated").textContent=fmt(s["Integrated - NY OA"]||0);
+  byId("pInstallation").textContent=fmt(s["Installation"]||0);
+  byId("pNYInstall").textContent=fmt(s["NY Install"]||0);
+  byId("planStatus").addEventListener("change",renderPlanning);byId("planSearch").addEventListener("input",renderPlanning);renderPlanning();
+}
+function renderPlanning(){
+  const s=byId("planStatus").value,q=byId("planSearch").value.toLowerCase();
+  const a=DATA.sites.filter(x=>x.status!=="On Air"&&(s==="all"||x.status===s)&&(!q||[x.site_id,x.site_name,x.city].some(v=>(v||"").toLowerCase().includes(q)))).slice(0,500);
+  byId("planningBody").innerHTML=a.map(x=>`<tr><td><b>${x.site_id}</b></td><td>${x.site_name}</td><td>${x.city}</td><td>${x.kecamatan}</td><td>${x.status}</td><td>${x.vendor}</td><td>${x.program}</td><td>${x.integration_date||"—"}</td></tr>`).join("");
+}
+
+if(["sites","analytics","regional","network","planning"].includes(page)) getData().catch(e=>alert(e.message));
+
+
+// ===== Direct Site Locator =====
+function focusSiteFromSearch(){
+  if(!DATA || !Array.isArray(DATA.sites) || !map) return;
+
+  const input = byId("siteSearch");
+  if(!input) return;
+
+  const query = input.value.trim().toLowerCase();
+  if(!query) return;
+
+  // Prioritaskan exact Site ID, kemudian exact Site Name,
+  // terakhir partial Site ID / Site Name.
+  let site = DATA.sites.find(x =>
+    String(x.site_id || "").toLowerCase() === query
+  );
+
+  if(!site){
+    site = DATA.sites.find(x =>
+      String(x.site_name || "").toLowerCase() === query
+    );
+  }
+
+  if(!site){
+    site = DATA.sites.find(x =>
+      String(x.site_id || "").toLowerCase().includes(query) ||
+      String(x.site_name || "").toLowerCase().includes(query)
+    );
+  }
+
+  if(!site){
+    alert("Site tidak ditemukan.");
+    return;
+  }
+
+  if(typeof site.lat !== "number" || typeof site.lng !== "number"){
+    alert("Site ditemukan, tetapi koordinat tidak tersedia.");
+    return;
+  }
+
+  // Kosongkan filter agar site pasti dapat ditampilkan.
+  const city = byId("fCity");
+  const status = byId("fStatus");
+  const vendor = byId("fVendor");
+
+  if(city) city.value = "all";
+  if(status) status.value = "all";
+  if(vendor) vendor.value = "all";
+
+  input.value = site.site_id || site.site_name || query;
+
+  sitePage = 1;
+  renderSites();
+
+  // Fokus langsung ke koordinat site.
+  map.flyTo([site.lat, site.lng], 17, {
+    animate: true,
+    duration: 1.2
+  });
+
+  setTimeout(() => {
+    L.popup({
+      autoPan: true,
+      closeButton: true
+    })
+    .setLatLng([site.lat, site.lng])
+    .setContent(`
+      <div style="min-width:180px">
+        <b>${site.site_id || "-"}</b><br>
+        ${site.site_name || "-"}<br>
+        <b>City:</b> ${site.city || "-"}<br>
+        <b>Kecamatan:</b> ${site.kecamatan || "-"}<br>
+        <b>Status:</b> ${site.status || "-"}<br>
+        <b>Vendor:</b> ${site.vendor || "-"}<br>
+        <b>Program:</b> ${site.program || "-"}
+      </div>
+    `)
+    .openOn(map);
+  }, 700);
+}
+
+document.addEventListener("keydown", function(e){
+  const search = byId("siteSearch");
+
+  if(
+    e.key === "Enter" &&
+    search &&
+    document.activeElement === search
+  ){
+    e.preventDefault();
+    focusSiteFromSearch();
+  }
+});
+
+
+// ===== Direct Site Locator =====
+function focusSiteFromSearch(){
+  if(!DATA || !Array.isArray(DATA.sites) || !map) return;
+
+  const input = byId("siteSearch");
+  if(!input) return;
+
+  const query = input.value.trim().toLowerCase();
+  if(!query) return;
+
+  // Prioritaskan exact Site ID, kemudian exact Site Name,
+  // terakhir partial Site ID / Site Name.
+  let site = DATA.sites.find(x =>
+    String(x.site_id || "").toLowerCase() === query
+  );
+
+  if(!site){
+    site = DATA.sites.find(x =>
+      String(x.site_name || "").toLowerCase() === query
+    );
+  }
+
+  if(!site){
+    site = DATA.sites.find(x =>
+      String(x.site_id || "").toLowerCase().includes(query) ||
+      String(x.site_name || "").toLowerCase().includes(query)
+    );
+  }
+
+  if(!site){
+    alert("Site tidak ditemukan.");
+    return;
+  }
+
+  if(typeof site.lat !== "number" || typeof site.lng !== "number"){
+    alert("Site ditemukan, tetapi koordinat tidak tersedia.");
+    return;
+  }
+
+  // Kosongkan filter agar site pasti dapat ditampilkan.
+  const city = byId("fCity");
+  const status = byId("fStatus");
+  const vendor = byId("fVendor");
+
+  if(city) city.value = "all";
+  if(status) status.value = "all";
+  if(vendor) vendor.value = "all";
+
+  input.value = site.site_id || site.site_name || query;
+
+  sitePage = 1;
+  renderSites();
+
+  // Fokus langsung ke koordinat site.
+  map.flyTo([site.lat, site.lng], 17, {
+    animate: true,
+    duration: 1.2
+  });
+
+  setTimeout(() => {
+    L.popup({
+      autoPan: true,
+      closeButton: true
+    })
+    .setLatLng([site.lat, site.lng])
+    .setContent(`
+      <div style="min-width:180px">
+        <b>${site.site_id || "-"}</b><br>
+        ${site.site_name || "-"}<br>
+        <b>City:</b> ${site.city || "-"}<br>
+        <b>Kecamatan:</b> ${site.kecamatan || "-"}<br>
+        <b>Status:</b> ${site.status || "-"}<br>
+        <b>Vendor:</b> ${site.vendor || "-"}<br>
+        <b>Program:</b> ${site.program || "-"}
+      </div>
+    `)
+    .openOn(map);
+  }, 700);
+}
+
+document.addEventListener("keydown", function(e){
+  const search = byId("siteSearch");
+
+  if(
+    e.key === "Enter" &&
+    search &&
+    document.activeElement === search
+  ){
+    e.preventDefault();
+    focusSiteFromSearch();
+  }
+});

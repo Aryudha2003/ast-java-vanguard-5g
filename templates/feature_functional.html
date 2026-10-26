@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} — East Java Vanguard 5G</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  {% if page == 'sites' %}
+  <!-- MapTiler SDK -->
+  <link rel="stylesheet" href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css">
+  <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
+
+  <!-- Leaflet Fallback -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  {% endif %}
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <meta name="maptiler-api-key" content="{{ maptiler_api_key }}">
+</head>
+
+<body class="dashboard-body" data-page="{{ page }}" data-role="{{ user.role }}">
+  {% from '_nav.html' import nav %}{{ nav(user, page) }}
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title-group">
+        <h1 class="topbar-heading">{{ title }}</h1>
+        <span class="topbar-subheading">East Java Vanguard &bull; {{ 'Admin Console' if user.role == 'admin' else 'Viewer Portal' }}</span>
+      </div>
+    </div>
+
+    <div class="topbar-center">
+      <div class="live-pill">
+        <span class="live-dot"></span>
+        <span>5G ENTERPRISE PLATFORM</span>
+      </div>
+      <div class="clock-display" id="clock">--:-- WIB</div>
+    </div>
+
+    <div class="topright">
+      <div class="security-badge-top">
+        <svg class="icon-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <div class="badge-texts">
+          <b>{{ user.role|upper }}</b>
+          <span>{{ 'Full operational access' if user.role == 'admin' else 'Read-only access' }}</span>
+        </div>
+      </div>
+
+      <div class="profile">
+        <div class="avatar">{{ user.name[:1] if user.name else 'U' }}</div>
+        <div class="profile-details">
+          <b>{{ user.name or user.email.split('@')[0] }}</b>
+          <span class="role-tag {{ 'tag-admin' if user.role == 'admin' else 'tag-viewer' }}">
+            {{ 'Administrator' if user.role == 'admin' else 'Viewer' }}
+          </span>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn-logout" title="Keluar dari sistem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="content feature-content">
+
+    <!-- 1. 5G SITES PAGE -->
+    {% if page == 'sites' %}
+    <section class="kpis mini-kpis">
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v20M8 6l8 4M8 14l8 4"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Filtered Sites</span>
+          <strong class="kpi-value" id="sitesTotal">—</strong>
+          <small class="kpi-subtext">Dari database Vanguard</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">On Air</span>
+          <strong class="kpi-value value-green" id="sitesOnAir">—</strong>
+          <small class="kpi-subtext" id="sitesOnAirPct">Aktif mengudara</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Integrated – NY OA</span>
+          <strong class="kpi-value value-blue" id="sitesInt">—</strong>
+          <small class="kpi-subtext">Terintegrasi, siap OA</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 14 14"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">On Progress</span>
+          <strong class="kpi-value value-amber" id="sitesProgress">—</strong>
+          <small class="kpi-subtext">Installation &amp; NY Install</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- SITES MAP CARD -->
+    <section class="card mapcard">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Site Geospatial Explorer</h2>
+          <p class="card-subtitle">Peta interaktif sebaran site 5G di seluruh Jawa Timur</p>
+        </div>
+        <div class="filters-toolbar">
+          <select id="fCity" class="filter-select"><option value="all">Semua Kota</option></select>
+          <select id="fStatus" class="filter-select">
+            <option value="all">Semua Status</option>
+            <option value="On Air">On Air</option>
+            <option value="Integrated - NY OA">Integrated – NY OA</option>
+            <option value="Installation">Installation</option>
+            <option value="NY Install">NY Install</option>
+          </select>
+          <select id="fVendor" class="filter-select">
+            <option value="all">Semua Vendor</option>
+            <option value="Nokia">Nokia</option>
+            <option value="Huawei">Huawei</option>
+          </select>
+          <input id="siteSearch" class="table-search-input" placeholder="Cari Site ID / Site Name...">
+          {% if user.role == 'admin' %}
+          <a class="btn-action-primary" href="{{ url_for('export_dataset', dataset='sites') }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export Sites CSV</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="map-viewport-wrapper">
+        <div id="sitesMap"></div>
+        <div class="map-legend">
+          <span class="leg-item"><i class="leg-dot onair"></i>On Air</span>
+          <span class="leg-item"><i class="leg-dot integrated"></i>Integrated NY OA</span>
+          <span class="leg-item"><i class="leg-dot installation"></i>Installation</span>
+          <span class="leg-item"><i class="leg-dot nyinstall"></i>NY Install</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SITES TABLE CARD -->
+    <section class="card table-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Daftar Site 5G Jawa Timur</h2>
+          <p class="card-subtitle">Klik baris site untuk melihat posisi langsung pada peta di atas</p>
+        </div>
+      </div>
+      <div class="table-wrap tall-table">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Site ID</th>
+              <th>Site Name</th>
+              <th>Kabupaten/Kota</th>
+              <th>Kecamatan</th>
+              <th>Status Rollout</th>
+              <th>RAN Vendor</th>
+              <th>Program</th>
+              <th>Integration Date</th>
+              <th>On Air Date</th>
+            </tr>
+          </thead>
+          <tbody id="sitesBody">
+            <tr><td colspan="9" class="table-loading">Memuat data site...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-pagination">
+        <div class="table-result-count" id="sitesResultCount">Menampilkan data...</div>
+        <div class="pager-controls">
+          <button id="sitePrev" class="btn-page">&larr; Previous</button>
+          <span id="sitePage" class="page-indicator">Halaman 1</span>
+          <button id="siteNext" class="btn-page">Next &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ANALYTICS PAGE -->
+    {% if page == 'analytics' %}
+    <section class="kpis mini-kpis">
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="9" rx="1.5"/>
+            <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+            <rect x="14" y="12" width="7" height="9" rx="1.5"/>
+            <rect x="3" y="16" width="7" height="5" rx="1.5"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Total Sites Tracked</span>
+          <strong class="kpi-value" id="aTotal">—</strong>
+          <small class="kpi-subtext">Region Jawa Timur</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">On Air Rate</span>
+          <strong class="kpi-value value-green" id="aRate">—</strong>
+          <small class="kpi-subtext">Tingkat keberhasilan rollout</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 20V10M12 20V4M6 20v-6"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Nokia RAN Share</span>
+          <strong class="kpi-value value-blue" id="aNokia">—</strong>
+          <small class="kpi-subtext">Vendor Terbanyak</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Huawei RAN Share</span>
+          <strong class="kpi-value value-amber" id="aHuawei">—</strong>
+          <small class="kpi-subtext">Vendor RAN</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYTICS CHARTS GRID -->
+    <section class="analytics-grid">
+      <div class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Status Rollout 5G</h2>
+            <p class="card-subtitle">Komposisi status seluruh 1.741 site</p>
+          </div>
+        </div>
+        <div id="statusBars" class="big-bars-container"></div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Pangsa Pasar Vendor RAN</h2>
+            <p class="card-subtitle">Perbandingan perangkat Nokia vs Huawei</p>
+          </div>
+        </div>
+        <div id="vendorAnalytics" class="big-bars-container"></div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Alokasi Program 5G</h2>
+            <p class="card-subtitle">5G Coverage vs 5G Refarm</p>
+          </div>
+        </div>
+        <div id="programAnalytics" class="big-bars-container"></div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Top Regional On Air Rate</h2>
+            <p class="card-subtitle">Kabupaten/Kota dengan penyelesaian tertinggi</p>
+          </div>
+        </div>
+        <div id="topCityBars" class="big-bars-container"></div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- 3. REGIONAL REPORT PAGE -->
+    {% elif page == 'regional' %}
+    <section class="card table-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Regional Performance Summary</h2>
+          <p class="card-subtitle">Rekapitulasi komprehensif deployment 5G per kabupaten/kota di Jawa Timur</p>
+        </div>
+        <div class="table-actions-toolbar">
+          <input id="regionalSearch" class="table-search-input" placeholder="Cari nama kabupaten/kota...">
+          {% if user.role == 'admin' %}
+          <a class="btn-action-primary" href="{{ url_for('export_dataset', dataset='regional') }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export Regional CSV</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Kabupaten / Kota</th>
+              <th>Total Site</th>
+              <th>Kecamatan</th>
+              <th>On Air</th>
+              <th>Integrated NY OA</th>
+              <th>Installation</th>
+              <th>NY Install</th>
+              <th>On Air Rate (%)</th>
+              <th>Nokia</th>
+              <th>Huawei</th>
+            </tr>
+          </thead>
+          <tbody id="regionalBody">
+            <tr><td colspan="10" class="table-loading">Memuat data regional...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card chart-card" style="margin-top:16px;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Peringkat On Air Rate per Kota</h2>
+          <p class="card-subtitle">Persentase site on-air terhadap total target per wilayah</p>
+        </div>
+      </div>
+      <div id="regionalBars" class="big-bars-container regional-bars"></div>
+    </section>
+    {% endif %}
+
+    <!-- 4. NETWORK PERFORMANCE PAGE -->
+    {% if page == 'network' %}
+    <div class="notice-source-card">
+      <div class="notice-icon">ℹ️</div>
+      <div class="notice-body">
+        <b>Catatan Karakteristik Dataset</b>
+        <p>Workbook raw Vanguard berfokus pada status rollout fisik (Deployment Status), bukan performa RF real-time (seperti RSRP, SINR, Throughput, atau OSS Alarms). Halaman ini menyajikan <b>Deployment Health Proxy Index</b> berdasarkan kematangan integrasi dan on-air.</p>
+      </div>
+    </div>
+
+    <section class="kpis mini-kpis">
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Deployment Completion</span>
+          <strong class="kpi-value value-green" id="nCompletion">—</strong>
+          <small class="kpi-subtext">Overall On Air Progress</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Integrated Ready</span>
+          <strong class="kpi-value value-blue" id="nIntegrated">—</strong>
+          <small class="kpi-subtext">Siap Go-Live</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">In Installation</span>
+          <strong class="kpi-value value-amber" id="nInstallation">—</strong>
+          <small class="kpi-subtext">Proses konstruksi fisik</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Not Yet Install (Backlog)</span>
+          <strong class="kpi-value" id="nNotYet">—</strong>
+          <small class="kpi-subtext">Antrian deployment</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="analytics-grid">
+      <div class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Deployment Health Index per Region</h2>
+            <p class="card-subtitle">Kematangan deployment per kabupaten/kota</p>
+          </div>
+        </div>
+        <div id="networkRegionBars" class="big-bars-container"></div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Backlog Rollout by Vendor</h2>
+            <p class="card-subtitle">Site yang belum berstatus On Air berdasarkan vendor</p>
+          </div>
+        </div>
+        <div id="networkBacklog" class="big-bars-container"></div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- 5. PLANNING & ROLLOUT PAGE -->
+    {% if page == 'planning' %}
+    <section class="kpis mini-kpis">
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Total Rollout Backlog</span>
+          <strong class="kpi-value value-amber" id="pBacklog">—</strong>
+          <small class="kpi-subtext">Site belum on-air</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Integrated NY OA</span>
+          <strong class="kpi-value value-blue" id="pIntegrated">—</strong>
+          <small class="kpi-subtext">Kandidat on-air terdekat</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M8 6l8 4"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Installation</span>
+          <strong class="kpi-value" id="pInstallation">—</strong>
+          <small class="kpi-subtext">Dalam instalasi lapangan</small>
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-icon-wrap ico-green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div class="kpi-body">
+          <span class="kpi-label">Not Yet Install</span>
+          <strong class="kpi-value" id="pNYInstall">—</strong>
+          <small class="kpi-subtext">Menunggu alokasi perangkat</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- BACKLOG TABLE CARD -->
+    <section class="card table-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Daftar Backlog Rollout 5G</h2>
+          <p class="card-subtitle">Prioritas penuntasan site 5G yang belum on-air</p>
+        </div>
+        <div class="table-actions-toolbar">
+          <select id="planStatus" class="filter-select">
+            <option value="all">Semua Backlog</option>
+            <option value="Integrated - NY OA">Integrated – NY OA</option>
+            <option value="Installation">Installation</option>
+            <option value="NY Install">NY Install</option>
+          </select>
+          <input id="planSearch" class="table-search-input" placeholder="Cari site / wilayah...">
+        </div>
+      </div>
+      <div class="table-wrap tall-table">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Site ID</th>
+              <th>Site Name</th>
+              <th>Kabupaten/Kota</th>
+              <th>Kecamatan</th>
+              <th>Status</th>
+              <th>Vendor</th>
+              <th>Program</th>
+              <th>Integration Date</th>
+            </tr>
+          </thead>
+          <tbody id="planningBody">
+            <tr><td colspan="8" class="table-loading">Memuat daftar backlog...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- 6. SETTINGS PAGE -->
+    {% if page == 'settings' %}
+    <section class="settings-grid">
+      <!-- USER ACCOUNT CARD -->
+      <div class="card setting-card">
+        <div class="setting-card-head">
+          <div class="setting-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h2 class="setting-title">Informasi Akun</h2>
+        </div>
+        <dl class="setting-dl">
+          <dt>Nama Akun</dt>
+          <dd>{{ user.name or user.email.split('@')[0] }}</dd>
+          <dt>Email</dt>
+          <dd>{{ user.email }}</dd>
+          <dt>Peran / Role</dt>
+          <dd><span class="role-chip {{ 'chip-admin' if user.role == 'admin' else 'chip-viewer' }}">{{ user.role|upper }}</span></dd>
+          <dt>Portal Akses</dt>
+          <dd>{{ 'Administrator Console' if user.role == 'admin' else 'Viewer Portal (Read-Only)' }}</dd>
+        </dl>
+      </div>
+
+      <!-- SYSTEM SECURITY MATRIX -->
+      <div class="card setting-card">
+        <div class="setting-card-head">
+          <div class="setting-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h2 class="setting-title">Parameter Keamanan</h2>
+        </div>
+        <dl class="setting-dl">
+          <dt>Session Timeout</dt>
+          <dd>30 Menit (Inactivity Auto-Kill)</dd>
+          <dt>Access Whitelist</dt>
+          <dd>Explicit Server-Side JSON</dd>
+          <dt>CSRF Protection</dt>
+          <dd>Token-based on all write actions</dd>
+          <dt>Browser Cache</dt>
+          <dd>no-store, no-cache, private</dd>
+          <dt>Content Security Policy</dt>
+          <dd>Strict (Anti-Framing, Anti-XSS)</dd>
+        </dl>
+      </div>
+
+      <!-- ADMIN CONTROLS / VIEWER NOTICE -->
+      <div class="card setting-card">
+        <div class="setting-card-head">
+          <div class="setting-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h2 class="setting-title">Kontrol Otorisasi</h2>
+        </div>
+        {% if user.role == 'admin' %}
+        <p class="setting-desc">
+          Sebagai Administrator, Anda memiliki otorisasi penuh untuk mengelola whitelist pengguna dan memvalidasi pembaruan dataset telekomunikasi.
+        </p>
+        <div class="settings-actions-group">
+          <a class="btn-action-primary" href="{{ url_for('user_management') }}">
+            <span>User Whitelist</span>
+            &rarr;
+          </a>
+          <a class="btn-action-secondary" href="{{ url_for('data_update_center') }}">
+            <span>Data Update Center</span>
+            &rarr;
+          </a>
+          <a class="btn-action-secondary" href="{{ url_for('audit_log_page') }}">
+            <span>Audit Log</span>
+            &rarr;
+          </a>
+        </div>
+        {% else %}
+        <p class="setting-desc">
+          Akun Viewer beroperasi dalam mode baca saja (read-only). Fungsi manipulasi data, perubahan hak akses whitelist, dan ekspor dataset CSV diproteksi ketat pada sisi backend.
+        </p>
+        {% endif %}
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- ROLE BANNER FOOTER -->
+    {% if user.role == 'admin' %}
+    <section class="banner-notice banner-admin">
+      <div class="banner-icon">🛡️</div>
+      <div class="banner-body">
+        <b>Sesi Administrator Aktif</b>
+        <span>Anda memiliki hak akses operasional penuh, termasuk manajemen pengguna, ekspor data, pipeline update XLSX, dan peninjauan audit trail.</span>
+      </div>
+    </section>
+    {% else %}
+    <section class="banner-notice banner-viewer">
+      <div class="banner-icon">👁️</div>
+      <div class="banner-body">
+        <b>Sesi Viewer (Read-Only)</b>
+        <span>Akses dibatasi untuk pemantauan visual. Seluruh endpoint penulisan data dan pengubahan otorisasi dilindungi di level server.</span>
+      </div>
+    </section>
+    {% endif %}
+
+  </main>
+
+  <!-- WATERMARK -->
+  <div class="watermark" aria-hidden="true">
+    INDOSAT 5G VANGUARD &bull; {{ user.email }} &bull; {{ user.role|upper }}
+  </div>
+
+  <script src="{{ url_for('static', filename='features_v4.js') }}"></script>
+</body>
+</html>

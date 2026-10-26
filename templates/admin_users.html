@@ -1,0 +1,14 @@
+
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>User Management</title><link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}"></head><body>
+{% from '_nav.html' import nav %}{{ nav(user,page) }}
+<header class="topbar"><div><h1>User Management</h1><span>Admin only</span></div><div class="topright"><div class="conf"><b>ADMIN</b><span>Restricted function</span></div><div class="profile"><div class="avatar">{{ user.name[:1] }}</div><div><b>{{ user.email }}</b><span>Administrator</span></div><a href="{{ url_for('logout') }}">↪</a></div></div></header>
+<main class="content">
+<section class="kpis"><div class="card kpi"><div><span>Role Model</span><strong>2</strong><small>Admin & Viewer</small></div></div>
+<div class="card kpi"><div><span>Allowed Accounts</span><strong>{{ access_rules|length }}</strong><small>Configured server-side</small></div></div></section>
+<section class="card"><div class="head"><div><h2>Authorized Accounts</h2><p>Perubahan produksi dilakukan via ACCESS_RULES_JSON / identity provider.</p></div></div>
+<div class="table-wrap"><table><thead><tr><th>Email</th><th>Role</th><th>Capability</th></tr></thead><tbody>
+{% for email, role in access_rules.items() %}<tr><td>{{ email }}</td><td><span class="status-pill {{ 's-onair' if role=='admin' else 's-int' }}">{{ role }}</span></td><td>{{ 'Full admin control' if role=='admin' else 'Read-only portal' }}</td></tr>{% endfor %}
+</tbody></table></div></section>
+<section class="card admin-banner"><b>Security note</b><span>Viewer tidak dapat membuka URL admin secara manual; backend akan mengembalikan 403.</span></section>
+</main><div class="watermark">CONFIDENTIAL • {{ user.email }} • ADMIN</div></body></html>

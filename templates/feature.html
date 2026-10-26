@@ -1,0 +1,38 @@
+
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }} — East Java Vanguard</title><link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}"></head>
+<body>
+{% from '_nav.html' import nav %}{{ nav(user,page) }}
+<header class="topbar"><div><h1>{{ title }}</h1><span>East Java Vanguard • {{ 'Admin Console' if user.role=='admin' else 'Viewer Portal' }}</span></div>
+<div class="topright"><div class="conf"><b>{{ user.role|upper }}</b><span>Role-based access</span></div><div class="profile"><div class="avatar">{{ user.name[:1] }}</div><div><b>{{ user.email }}</b><span>{{ user.role|title }}</span></div><a href="{{ url_for('logout') }}">↪</a></div></div></header>
+<main class="content">
+  <section class="card feature-hero"><h2>{{ title }}</h2>
+  {% if page=='sites' %}
+    <p>Daftar site, status rollout, vendor, program, koordinat, integration date, dan on-air date.</p>
+    <div class="feature-grid"><div><b>Viewer</b><span>Lihat, cari, filter, buka detail site.</span></div><div><b>Admin</b><span>Semua akses Viewer + export dan kontrol data operasional.</span></div></div>
+  {% elif page=='analytics' %}
+    <p>Analisis KPI, distribusi status, vendor, program, tren, dan performa rollout.</p>
+    <div class="feature-grid"><div><b>Viewer</b><span>Melihat dashboard analitik.</span></div><div><b>Admin</b><span>Export insight dan akses data lebih luas.</span></div></div>
+  {% elif page=='regional' %}
+    <p>Ringkasan per kabupaten/kota, kecamatan, progress, dan coverage.</p>
+    <div class="feature-grid"><div><b>Viewer</b><span>Regional read-only report.</span></div><div><b>Admin</b><span>Export report dan audit aktivitas.</span></div></div>
+  {% elif page=='network' %}
+    <p>Area untuk KPI jaringan seperti availability, latency, throughput, alarm, dan site health.</p>
+    <div class="empty-state">Hubungkan ke OSS/NMS/API internal untuk data network performance real-time.</div>
+  {% elif page=='planning' %}
+    <p>Planning rollout, milestone, target integration/on-air, dan backlog site.</p>
+    <div class="feature-grid"><div><b>Viewer</b><span>Melihat plan dan progress.</span></div><div><b>Admin</b><span>Kelola rencana, export, dan kontrol workflow.</span></div></div>
+  {% else %}
+    <p>Pengaturan akun dan preferensi portal.</p>
+    <div class="feature-grid"><div><b>Viewer</b><span>Pengaturan tampilan dan session pribadi.</span></div><div><b>Admin</b><span>Security overview, policy, dan konfigurasi akses.</span></div></div>
+  {% endif %}
+  </section>
+  {% if user.role=='admin' %}
+  <section class="card admin-banner"><b>Admin capability enabled</b><span>Route ini dilindungi server-side RBAC. Menu admin hanya diberikan ke role Admin.</span></section>
+  {% else %}
+  <section class="card viewer-banner"><b>Viewer read-only mode</b><span>Aksi sensitif seperti export, User Management, dan Audit Log diblokir di backend.</span></section>
+  {% endif %}
+</main>
+<div class="watermark">CONFIDENTIAL • {{ user.email }} • {{ user.role|upper }}</div>
+</body></html>

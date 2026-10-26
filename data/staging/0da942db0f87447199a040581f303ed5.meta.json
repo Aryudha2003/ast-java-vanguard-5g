@@ -1,0 +1,625 @@
+{
+  "token": "0da942db0f87447199a040581f303ed5",
+  "source_name": "20261009_113551_Progress_and_Plan_Vanguard_2026_21_Sept_1.xlsx",
+  "before": {
+    "total_sites": 1741,
+    "on_air": 1303,
+    "integrated": 8,
+    "on_progress": 430
+  },
+  "after": {
+    "total_sites": 1741,
+    "on_air": 1087,
+    "integrated": 20,
+    "on_progress": 634
+  },
+  "delta": {
+    "total_sites": 0,
+    "on_air": -216,
+    "integrated": 12,
+    "on_progress": 204
+  },
+  "validation": {
+    "duplicate_site_id_count": 17,
+    "duplicate_site_ids": [
+      {
+        "site_id": "16SBY0188",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "CWS2_MI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "DUKUH PAKIS",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2933,
+            "lng": 112.7187
+          },
+          {
+            "site_name": "CWS2_MI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "DUKUH PAKIS",
+            "status": "On Air",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2933,
+            "lng": 112.7187
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0240",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "CITYTOMORROW_DH",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "GAYUNGAN",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3449,
+            "lng": 112.7286
+          },
+          {
+            "site_name": "CITYTOMORROW_DH",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "GAYUNGAN",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3449,
+            "lng": 112.7286
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0249",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "I2_MAC_GUDANGDUPAK_GROSIRSBY_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "BUBUTAN",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2471,
+            "lng": 112.7296
+          },
+          {
+            "site_name": "I2_MAC_GUDANGDUPAK_GROSIRSBY_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "BUBUTAN",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2471,
+            "lng": 112.7296
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0251",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "SUTOS_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "WONOKROMO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2949,
+            "lng": 112.7301
+          },
+          {
+            "site_name": "SUTOS_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "WONOKROMO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2949,
+            "lng": 112.7301
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0274",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "I2_BGJUNCTION_VIP_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "BUBUTAN",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2544,
+            "lng": 112.7332
+          },
+          {
+            "site_name": "I2_BGJUNCTION_VIP_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "BUBUTAN",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2544,
+            "lng": 112.7332
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0278",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "I2_MALL_ROYAL_PLAZA_KI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "WONOKROMO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3097,
+            "lng": 112.7335
+          },
+          {
+            "site_name": "I2_MALL_ROYAL_PLAZA_KI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "WONOKROMO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3097,
+            "lng": 112.7335
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0347",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "CENTRALPOIN_MI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "WONOKROMO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2909,
+            "lng": 112.7437
+          },
+          {
+            "site_name": "CENTRALPOIN_MI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "WONOKROMO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2909,
+            "lng": 112.7437
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0358",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "KAYUNMSC_EP",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "GENTENG",
+            "status": "On Air",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2714,
+            "lng": 112.7446
+          },
+          {
+            "site_name": "KAYUNMSC_EP",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "GENTENG",
+            "status": "On Air",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2714,
+            "lng": 112.7446
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0367",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "MARVELCITY_SBY_SUPERBLOCK2_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "WONOKROMO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2893,
+            "lng": 112.7456
+          },
+          {
+            "site_name": "MARVELCITY_SBY_SUPERBLOCK2_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "WONOKROMO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2893,
+            "lng": 112.7456
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0401",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "PASAR_KAPASAN1_IJ",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "SIMOKERTO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2397,
+            "lng": 112.7501
+          },
+          {
+            "site_name": "PASAR_KAPASAN1_IJ",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "SIMOKERTO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2397,
+            "lng": 112.7501
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0443",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "RSUD_DRSUTOMO_MI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "GUBENG",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.27,
+            "lng": 112.7571
+          },
+          {
+            "site_name": "RSUD_DRSUTOMO_MI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "GUBENG",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.27,
+            "lng": 112.7571
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0503",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "KAMPUS_UBAYA_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "RUNGKUT",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3224,
+            "lng": 112.7684
+          },
+          {
+            "site_name": "KAMPUS_UBAYA_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "RUNGKUT",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3224,
+            "lng": 112.7684
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0560",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "RSHAJI_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "SUKOLILO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2839,
+            "lng": 112.7801
+          },
+          {
+            "site_name": "RSHAJI_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "SUKOLILO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2839,
+            "lng": 112.7801
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0562",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "GALAXY_MALL1_DH",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "MULYOREJO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2765,
+            "lng": 112.7806
+          },
+          {
+            "site_name": "GALAXY_MALL1_DH",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "MULYOREJO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2765,
+            "lng": 112.7806
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0633",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "I2_EAST_COAST_MALL_KI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "MULYOREJO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2767,
+            "lng": 112.8058
+          },
+          {
+            "site_name": "I2_EAST_COAST_MALL_KI",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "MULYOREJO",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.2767,
+            "lng": 112.8058
+          }
+        ]
+      },
+      {
+        "site_id": "16SBY0669",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "I2_TRANS_ICON_SURABAYA_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "GAYUNGAN",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3388,
+            "lng": 112.7274
+          },
+          {
+            "site_name": "I2_TRANS_ICON_SURABAYA_MC",
+            "city": "KOTA SURABAYA",
+            "kecamatan": "GAYUNGAN",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3388,
+            "lng": 112.7274
+          }
+        ]
+      },
+      {
+        "site_id": "16SDA0436",
+        "count": 2,
+        "rows": [
+          {
+            "site_name": "I2_BANDARA_JUANDA_DOMESTIK_AT",
+            "city": "SIDOARJO",
+            "kecamatan": "SEDATI",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3757,
+            "lng": 112.7986
+          },
+          {
+            "site_name": "I2_BANDARA_JUANDA_DOMESTIK_AT",
+            "city": "SIDOARJO",
+            "kecamatan": "SEDATI",
+            "status": "NY Install",
+            "vendor": "Nokia",
+            "program": "5G Refarm",
+            "lat": -7.3757,
+            "lng": 112.7986
+          }
+        ]
+      }
+    ],
+    "exact_duplicate_group_count": 15,
+    "exact_duplicate_row_count": 15,
+    "exact_duplicate_groups": [
+      {
+        "site_id": "16SBY0240",
+        "site_name": "CITYTOMORROW_DH",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "GAYUNGAN",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0249",
+        "site_name": "I2_MAC_GUDANGDUPAK_GROSIRSBY_MC",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "BUBUTAN",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0251",
+        "site_name": "SUTOS_MC",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "WONOKROMO",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0274",
+        "site_name": "I2_BGJUNCTION_VIP_MC",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "BUBUTAN",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0278",
+        "site_name": "I2_MALL_ROYAL_PLAZA_KI",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "WONOKROMO",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0347",
+        "site_name": "CENTRALPOIN_MI",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "WONOKROMO",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0367",
+        "site_name": "MARVELCITY_SBY_SUPERBLOCK2_MC",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "WONOKROMO",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0401",
+        "site_name": "PASAR_KAPASAN1_IJ",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "SIMOKERTO",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0443",
+        "site_name": "RSUD_DRSUTOMO_MI",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "GUBENG",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0503",
+        "site_name": "KAMPUS_UBAYA_MC",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "RUNGKUT",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0560",
+        "site_name": "RSHAJI_MC",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "SUKOLILO",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0562",
+        "site_name": "GALAXY_MALL1_DH",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "MULYOREJO",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0633",
+        "site_name": "I2_EAST_COAST_MALL_KI",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "MULYOREJO",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SBY0669",
+        "site_name": "I2_TRANS_ICON_SURABAYA_MC",
+        "city": "KOTA SURABAYA",
+        "kecamatan": "GAYUNGAN",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      },
+      {
+        "site_id": "16SDA0436",
+        "site_name": "I2_BANDARA_JUANDA_DOMESTIK_AT",
+        "city": "SIDOARJO",
+        "kecamatan": "SEDATI",
+        "status": "NY Install",
+        "vendor": "Nokia",
+        "program": "5G Refarm",
+        "count": 2
+      }
+    ],
+    "invalid_coordinate_count": 0,
+    "apply_blocked": true
+  }
+}

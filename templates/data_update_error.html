@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Validation Error — East Java Vanguard 5G</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='data_update_center.css') }}">
+</head>
+
+<body class="dashboard-body">
+  {% from '_nav.html' import nav %}{{ nav(user, page) }}
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title-group">
+        <h1 class="topbar-heading">Data Update Center</h1>
+        <span class="topbar-subheading">Admin Console &bull; Validation Diagnostic</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="content data-update-content">
+    <section class="card validation-error-card" style="max-width:650px;margin:50px auto;padding:40px;text-align:center;">
+      <div class="validation-error-icon" style="width:64px;height:64px;border-radius:20px;background:#fee2e2;color:#dc2626;font-size:32px;display:grid;place-items:center;margin:0 auto 16px;">
+        ⚠️
+      </div>
+      <span class="section-tag" style="color:#dc2626;">VALIDATION FAILED</span>
+      <h1 style="font-size:24px;margin:8px 0 12px;color:#1e293b;">Dataset Tidak Dapat Digunakan</h1>
+      <p style="color:#64748b;line-height:1.6;font-size:15px;margin-bottom:24px;">{{ message }}</p>
+      <a class="btn-action-primary" href="{{ url_for('data_update_center') }}" style="display:inline-flex;justify-content:center;padding:12px 24px;margin:0 auto;">
+        &larr; Kembali ke Data Update Center
+      </a>
+    </section>
+  </main>
+</body>
+</html>
